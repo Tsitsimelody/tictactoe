@@ -47,31 +47,35 @@ const increaseCompMoves = () => {
   };
 };
 
-export const makeSelection = (num, userCell) => {
+export const makeSelection = (num, userCell, isUserWinner) => {
   return (dispatch, getState) => {
-    const { compUser, user, compMoves, cells } = getState();
+    if (isUserWinner) {
+      return null;
+    } else {
+      const { compUser, user, compMoves, cells } = getState();
 
-    if (user === userCell) {
-      dispatch(onUserSelect(num, user));
+      if (user === userCell) {
+        dispatch(onUserSelect(num, user));
 
-      const freeCells =
-        compMoves === 0
-          ? [cells[0], cells[2], cells[4], cells[6], cells[8]].filter(
-              cell => cell.status === "free" && cell.id !== num
-            )
-          : cells.filter(cell => cell.status === "free" && cell.id !== num);
+        /// here is where i need to check for a user has won
 
-      console.log(freeCells);
+        const freeCells =
+          compMoves === 0
+            ? [cells[0], cells[2], cells[4], cells[6], cells[8]].filter(
+                cell => cell.status === "free" && cell.id !== num
+              )
+            : cells.filter(cell => cell.status === "free" && cell.id !== num);
 
-      if (freeCells.length) {
-        setTimeout(() => {
-          compSelection(freeCells, compUser, dispatch);
-        }, 1500);
+        if (freeCells.length) {
+          setTimeout(() => {
+            compSelection(freeCells, compUser, dispatch);
+          }, 1500);
+        }
       }
-    }
 
-    if (userCell === compUser) {
-      dispatch(onUserSelect(num, compUser));
+      if (userCell === compUser) {
+        dispatch(onUserSelect(num, compUser));
+      }
     }
   };
 };

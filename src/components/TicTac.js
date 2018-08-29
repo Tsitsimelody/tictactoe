@@ -22,7 +22,7 @@ type Props = {
   users: Array<string>,
   onPick: (str: string) => void,
   onChangePage: (num: number) => void,
-  userSelect: (num: number, user: string) => void,
+  userSelect: (num: number, user: string, userWinner: boolean) => void,
   onReset: () => void,
   page: number,
   user: string,
@@ -41,41 +41,46 @@ const TicTac = ({
   user,
   userWinner,
   compWinner
-}: Props) => (
-  <div>
-    <h2 style={{ paddingTop: "30px", fontSize: "40pt" }}> Tic Tac Toe </h2>
-    {page === 2 && <button onClick={onReset}> Reset </button>}
+}: Props) => {
+  if (userWinner) {
+    console.log("winner");
+  }
+  return (
+    <div>
+      <h2 style={{ paddingTop: "30px", fontSize: "40pt" }}> Tic Tac Toe </h2>
+      {page === 2 && <button onClick={onReset}> Reset </button>}
 
-    {page === 1 && <Picker users={users} pickUser={onPick} />}
-    {page === 2 && (
-      <React.Fragment>
-        <div className="cell-container">
-          {cells.map(cell => (
-            <Cell
-              key={cell.id}
-              user={user}
-              cell={cell.user}
-              index={cell.id}
-              disabled={cell.user !== ""}
-              userSelect={userSelect}
-            />
-          ))}
-        </div>
-        {userWinner && (
-          <div className="winner">
-            <div className="winner-inner">User Wins</div>
+      {page === 1 && <Picker users={users} pickUser={onPick} />}
+      {page === 2 && (
+        <React.Fragment>
+          <div className="cell-container">
+            {cells.map(cell => (
+              <Cell
+                key={cell.id}
+                user={user}
+                cell={cell.user}
+                index={cell.id}
+                userWinner={userWinner}
+                disabled={cell.user !== ""}
+                userSelect={userSelect}
+              />
+            ))}
           </div>
-        )}
-        {compWinner && (
-          <div className="winner">
-            <div className="winner-inner">Computer Wins</div>
-          </div>
-        )}
-      </React.Fragment>
-    )}
-  </div>
-);
-
+          {userWinner && (
+            <div className="winner">
+              <div className="winner-inner">User Wins</div>
+            </div>
+          )}
+          {compWinner && (
+            <div className="winner">
+              <div className="winner-inner">Computer Wins</div>
+            </div>
+          )}
+        </React.Fragment>
+      )}
+    </div>
+  );
+};
 const mapStateToProps = state => {
   return {
     cells: state.cells,
@@ -92,7 +97,8 @@ const mapDispatchToProps = dispatch => {
   return {
     onPick: str => dispatch(pickUser(str)),
     onChangePage: num => dispatch(changePage(num)),
-    userSelect: (num, user) => dispatch(makeSelection(num, user)),
+    userSelect: (num, user, isWinner) =>
+      dispatch(makeSelection(num, user, isWinner)),
     onReset: () => dispatch(reset())
   };
 };
