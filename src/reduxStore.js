@@ -1,4 +1,5 @@
 import { createSelector } from "reselect";
+import { checkForWinner, updateCells } from "./utils";
 
 /*
 
@@ -52,25 +53,10 @@ export const makeSelection = (num, userCell, isUserWinner) => {
     if (isUserWinner) {
       return null;
     } else {
-      const { compUser, user, compMoves, cells } = getState();
+      const { compUser, user } = getState();
 
       if (user === userCell) {
         dispatch(onUserSelect(num, user));
-
-        /// here is where i need to check for a user has won
-
-        const freeCells =
-          compMoves === 0
-            ? [cells[0], cells[2], cells[4], cells[6], cells[8]].filter(
-                cell => cell.status === "free" && cell.id !== num
-              )
-            : cells.filter(cell => cell.status === "free" && cell.id !== num);
-
-        if (freeCells.length) {
-          setTimeout(() => {
-            compSelection(freeCells, compUser, dispatch);
-          }, 1500);
-        }
       }
 
       if (userCell === compUser) {
@@ -80,7 +66,7 @@ export const makeSelection = (num, userCell, isUserWinner) => {
   };
 };
 
-const compSelection = (freeCells, compUser, dispatch) => {
+export const compSelection = (freeCells, compUser, dispatch) => {
   const pick = Math.floor(Math.random() * (freeCells.length - 1));
   const picked = freeCells[pick];
 
@@ -143,13 +129,7 @@ export const rootReducer = (state = INITIAL_STATE, action) => {
     case USER_SELECT:
       return {
         ...state,
-        cells: state.cells.map(cell => {
-          if (cell.id === action.num) {
-            return { id: cell.id, user: action.user, status: "done" };
-          }
-
-          return cell;
-        })
+        cells: updateCells(state.cells, action.num, action.user)
       };
 
     case RESET:
@@ -180,23 +160,7 @@ export const userWinnerSelector = createSelector(
   userSelector,
   (cells, winningCombos, user) => {
     if (user) {
-      const userIndexes = cells
-        .map(cell => {
-          if (cell.user === user) {
-            return cell.id;
-          }
-
-          return null;
-        })
-        .filter(x => x);
-
-      const isWinner = winningCombos.map(comb => {
-        return comb
-          .map(ini => userIndexes.includes(ini))
-          .some(element => element === false);
-      });
-
-      return isWinner.includes(false);
+      return checkForWinner(cells, winningCombos, user);
     }
 
     return false;
@@ -209,25 +173,32 @@ export const compWinnerSelector = createSelector(
   compSelector,
   (cells, winningCombos, user) => {
     if (user) {
-      const userIndexes = cells
-        .map(cell => {
-          if (cell.user === user) {
-            return cell.id;
-          }
-
-          return null;
-        })
-        .filter(x => x);
-
-      const isWinner = winningCombos.map(comb => {
-        return comb
-          .map(ini => userIndexes.includes(ini))
-          .some(element => element === false);
-      });
-
-      return isWinner.includes(false);
+      return checkForWinner(cells, winningCombos, user);
     }
 
     return false;
+  }
+);
+
+export const drawSelector = createSelector(
+  cellsSelector,
+  userWinnerSelector,
+  compWinnerSelector,
+  (cells, userWinner, compWinner) => {
+    const freeCells = cells.filter(cell => cell.status === "free");
+
+    if (freeCells.length) {
+      return false;
+    } else {
+      if (userWinner) {
+        return false;
+      }
+
+      if (compWinner) {
+        return false;
+      }
+
+      return true;
+    }
   }
 );

@@ -9,7 +9,8 @@ import {
   makeSelection,
   reset,
   userWinnerSelector,
-  compWinnerSelector
+  compWinnerSelector,
+  drawSelector
 } from "../reduxStore";
 
 type CellObj = {
@@ -27,7 +28,8 @@ type Props = {
   page: number,
   user: string,
   userWinner: boolean,
-  compWinner: boolean
+  compWinner: boolean,
+  isDraw: boolean
 };
 
 const TicTac = ({
@@ -40,11 +42,9 @@ const TicTac = ({
   onReset,
   user,
   userWinner,
-  compWinner
+  compWinner,
+  isDraw
 }: Props) => {
-  if (userWinner) {
-    console.log("winner");
-  }
   return (
     <div>
       <h2 style={{ paddingTop: "30px", fontSize: "40pt" }}> Tic Tac Toe </h2>
@@ -76,6 +76,12 @@ const TicTac = ({
               <div className="winner-inner">Computer Wins</div>
             </div>
           )}
+
+          {isDraw && (
+            <div className="winner">
+              <div className="winner-inner">Its a Draw</div>
+            </div>
+          )}
         </React.Fragment>
       )}
     </div>
@@ -88,7 +94,8 @@ const mapStateToProps = state => {
     user: state.user,
     page: state.page,
     userWinner: userWinnerSelector(state),
-    compWinner: compWinnerSelector(state)
+    compWinner: compWinnerSelector(state),
+    isDraw: drawSelector(state)
     // compUser: compUserSelector(state)
   };
 };
