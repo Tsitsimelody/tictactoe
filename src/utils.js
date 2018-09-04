@@ -36,7 +36,7 @@ export const calculateFreeCells = (cells, compMoves, num) => {
       );
 
     case 1:
-      return [cells[0], cells[2], cells[4], cells[6], cells[8]].filter(
+      return [cells[0], cells[2], cells[6], cells[8]].filter(
         cell => cell.status === "free"
       );
 

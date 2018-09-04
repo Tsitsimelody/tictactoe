@@ -19,4 +19,8 @@ const Picker = ({ users, pickUser }: Props) => (
   </div>
 );
 
+Picker.defaultProps = {
+  users: ["X", "O"]
+};
+
 export default Picker;
