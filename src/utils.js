@@ -28,11 +28,7 @@ export const updateCells = (cells, num, user) => {
   });
 };
 
-export const calculateFreeCells = (cells, compMoves, num, shouldMove) => {
-  if (shouldMove) {
-    return;
-  }
-
+export const calculateFreeCells = (cells, compMoves, num) => {
   switch (compMoves) {
     case 0:
       return [cells[0], cells[2], cells[6], cells[8]].filter(

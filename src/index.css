@@ -69,3 +69,18 @@ button {
   transform: rotate(30deg);
   background: white;
 }
+
+footer {
+  background: #f9f9f9;
+  bottom: 0;
+  height: 150px;
+  width: 100%;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+small {
+  opacity: 0.4;
+}

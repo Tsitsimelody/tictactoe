@@ -25,6 +25,13 @@ const computer = store => next => action => {
     compMoves
   } = store.getState();
 
+  if (action.type === "PAGE_NUM" && action.ber === "Computer Plays First") {
+    const free = calculateFreeCells(cells, compMoves);
+    setTimeout(() => {
+      compSelection(free, compUser, store.dispatch);
+    }, Math.floor(Math.random() * (2500 - 700 + 1)) + 700);
+  }
+
   if (action.type === "USER_SELECT" && action.user === user) {
     const updatedCells = updateCells(cells, action.num, action.user);
     const isWinner = checkForWinner(updatedCells, winningCombinations, user);
@@ -57,7 +64,7 @@ const computer = store => next => action => {
       if (freeCells.length) {
         setTimeout(() => {
           compSelection(freeCells, compUser, store.dispatch);
-        }, 1500);
+        }, Math.floor(Math.random() * (2500 - 700 + 1)) + 700);
       }
     }
   }

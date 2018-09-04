@@ -3,6 +3,7 @@ import React from "react";
 import { connect } from "react-redux";
 import Cell from "./Cell";
 import Picker from "./Picker";
+import Page2 from "./Page2";
 import {
   pickUser,
   changePage,
@@ -10,7 +11,8 @@ import {
   reset,
   userWinnerSelector,
   compWinnerSelector,
-  drawSelector
+  drawSelector,
+  randomBeginner
 } from "../reduxStore";
 
 type CellObj = {
@@ -22,14 +24,16 @@ type Props = {
   cells: Array<CellObj>,
   users: Array<string>,
   onPick: (str: string) => void,
-  onChangePage: (num: number) => void,
+  onChangePage: (num: number, per: string) => void,
   userSelect: (num: number, user: string, userWinner: boolean) => void,
   onReset: () => void,
   page: number,
   user: string,
+  compUser: string,
   userWinner: boolean,
   compWinner: boolean,
-  isDraw: boolean
+  isDraw: boolean,
+  randomBeginner: string
 };
 
 const TicTac = ({
@@ -43,15 +47,21 @@ const TicTac = ({
   user,
   userWinner,
   compWinner,
-  isDraw
+  isDraw,
+  randomBeginner
 }: Props) => {
   return (
     <div>
       <h2 style={{ paddingTop: "30px", fontSize: "40pt" }}> Tic Tac Toe </h2>
-      {page === 2 && <button onClick={onReset}> Reset </button>}
+
+      {page === 3 && <button onClick={onReset}> Reset </button>}
+
+      {page === 2 && (
+        <Page2 beginner={randomBeginner} onChangePage={onChangePage} />
+      )}
 
       {page === 1 && <Picker users={users} pickUser={onPick} />}
-      {page === 2 && (
+      {page === 3 && (
         <React.Fragment>
           <div className="cell-container">
             {cells.map(cell => (
@@ -84,18 +94,27 @@ const TicTac = ({
           )}
         </React.Fragment>
       )}
+
+      <footer>
+        <small>
+          <em> By Tsitsi Melody Mandizvidza </em>
+        </small>
+      </footer>
     </div>
   );
 };
+
 const mapStateToProps = state => {
   return {
     cells: state.cells,
     users: state.users,
     user: state.user,
+    compUser: state.compUser,
     page: state.page,
     userWinner: userWinnerSelector(state),
     compWinner: compWinnerSelector(state),
-    isDraw: drawSelector(state)
+    isDraw: drawSelector(state),
+    randomBeginner: randomBeginner(state)
     // compUser: compUserSelector(state)
   };
 };
@@ -103,7 +122,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     onPick: str => dispatch(pickUser(str)),
-    onChangePage: num => dispatch(changePage(num)),
+    onChangePage: (num, ber) => dispatch(changePage(num, ber)),
     userSelect: (num, user, isWinner) =>
       dispatch(makeSelection(num, user, isWinner)),
     onReset: () => dispatch(reset())

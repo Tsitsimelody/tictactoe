@@ -1,7 +1,7 @@
 import { createSelector } from "reselect";
 import { checkForWinner, updateCells } from "./utils";
 
-/*
+/******************************************************************************************** 
 
   Action Types
 
@@ -13,7 +13,7 @@ const USER_SELECT = "USER_SELECT";
 const RESET = "RESET";
 const INCREASE_COMP_MOVES = "INCREASE_COMP_MOVES";
 
-/*
+/******************************************************************************************** 
 
   Actions
 
@@ -27,10 +27,11 @@ export const pickUser = str => {
   };
 };
 
-export const changePage = num => {
+export const changePage = (num, ber) => {
   return {
     type: PAGE_NUM,
-    num
+    num,
+    ber
   };
 };
 
@@ -78,7 +79,7 @@ export const reset = () => {
   return { type: RESET };
 };
 
-/*
+/******************************************************************************************** 
 
   Reducers
 
@@ -143,13 +144,14 @@ export const rootReducer = (state = INITIAL_STATE, action) => {
   }
 };
 
-/*
+/******************************************************************************************** 
 
   Selectors
 
 */
 
 const userSelector = state => state.user;
+const usersSelector = state => state.users;
 const compSelector = state => state.compUser;
 const cellsSelector = state => state.cells;
 const winningCombinationsSelector = state => state.winningCombinations;
@@ -199,6 +201,22 @@ export const drawSelector = createSelector(
       }
 
       return true;
+    }
+  }
+);
+
+export const randomBeginner = createSelector(
+  usersSelector,
+  userSelector,
+  compSelector,
+  (users, user, compUser) => {
+    const num = Math.floor(Math.random() * 2);
+    const randomUser = users[num];
+
+    if (randomUser === user) {
+      return "User Plays First";
+    } else {
+      return "Computer Plays First";
     }
   }
 );
